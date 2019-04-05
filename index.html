@@ -1,13 +1,58 @@
 <html>
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script> 
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+<link href="https://code.jquery.com/ui/1.10.4/themes/ui-lightness/jquery-ui.css" rel="stylesheet">
+<script src="https://code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
+<script
+	src='https://www.jqueryscript.net/demo/Easy-jQuery-Progress-Bar-Timer-Plugin-For-Bootstrap-3-progressTimer/js/jquery.progressTimer.js'></script>
+
+<style>
+	.btn-circle.btn-xl {
+		width: 70px;
+		height: 70px;
+		padding: 10px 16px;
+		font-size: 24px;
+		line-height: 1.33;
+		border-radius: 35px;
+	}
+
+	#progressTimer {
+		width: 560px;
+		height: 5px;
+		position: fixed;
+		bottom: 0%;
+	}
+
+	#block-container {
+		position: fixed;
+		top: 50%;
+		left: 50%;
+		-webkit-transform: translate(-50%, -50%);
+		transform: translate(-50%, -50%);
+	}
+</style>
+
 
 <script type="text/javascript">
 
 
+	$(document).ready(function () {
+		$("#progressTimer").progressTimer({
+			timeLimit: 60,
+			warningThreshold: 50,
+			baseStyle: 'progress-bar-info',
+			warningStyle: 'progress-bar-danger',
+			completeStyle: 'progress-bar-danger',
+			onFinish: function () {
+				this.gameOver = true
 
+			}
+		});
+		setState()
 
-
+	});
 
 
 	var state
@@ -49,6 +94,8 @@
 		if (state == 0) {
 			if (direction == inputDirection) {
 				scoreAdd()
+			} else {
+				wrong()
 			}
 		} else {
 			if (inputDirection == 0 && direction == 1) {
@@ -59,19 +106,20 @@
 				scoreAdd()
 			} else if (inputDirection == 3 && direction == 2) {
 				scoreAdd()
+			} else {
+				wrong()
 			}
 		}
 
 		console.log("Score = " + score)
 	}
 
-	function scoreAdd(){
-		score+=1
-		$("#block-container").fadeOut();
-		setState()
+	function wrong() {
+		$("#block-container").effect("shake", { times: 2 });
 	}
 
-	window.onload = function () {
+	function scoreAdd() {
+		score += 1
 		setState()
 	}
 
@@ -87,7 +135,8 @@
 
 	function setUI() {
 		setArrow()
-		setColor()
+		setColor();
+		$("#block-container").hide();
 		$("#block-container").fadeIn();
 	}
 
@@ -95,44 +144,39 @@
 		var dirImg
 		switch (direction) {
 			case 0:
-				dirImg = "left.png"
+				dirImg = "left"
 				break
 			case 1:
-				dirImg = "right.png"
+				dirImg = "right"
 				break
 			case 2:
-				dirImg = "up.png"
+				dirImg = "up"
 				break
 			case 3:
-				dirImg = "down.png"
+				dirImg = "down"
 				break
 		}
-		document.getElementById("arrow").src = dirImg
+		var className = "glyphicon glyphicon-arrow-" + dirImg
+		console.log(className)
+		$("#arrow").removeClass()
+		$("#arrow").addClass(className);
 	}
 
 	function setColor() {
 		var color
 		switch (state) {
 			case 0:
-				color = "blue"
+				color = "info"
 				break
 			case 1:
-				color = "red"
+				color = "danger"
 				break
 		}
-		document.getElementById("block").style.background = color
+		var classNames = "btn btn-" + color + " btn-circle btn-xl"
+		console.log(classNames)
+		$("#block").removeClass()
+		$("#block").addClass(classNames);
 	}
-
-	var timeleft = 60;
-	var downloadTimer = setInterval(function () {
-		console.log(timeleft)
-		timeleft -= 1;
-		if (timeleft <= 0) {
-			clearInterval(downloadTimer);
-			gameOver = true
-		}
-	}, 1000);
-
 
 </script>
 
@@ -141,9 +185,11 @@
 <body>
 
 	<div id="block-container">
-		<div id="block" style="width:100px;height: 100px;background: #000000;"></div>
-		<img id="arrow" onclick="setState()" src="left.png" />
+		<button id="block" type="button" class="btn btn-info btn-circle btn-xl"><i id="arrow"
+				class="glyphicon glyphicon-arrow-right"></i></button>
 	</div>
+
+	<div id="progressTimer"></div>
 
 </body>
 
