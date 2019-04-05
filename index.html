@@ -1,0 +1,150 @@
+<html>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script> 
+
+<script type="text/javascript">
+
+
+
+
+
+
+
+	var state
+	var direction
+	var score = 0
+	var gameOver = false
+
+	document.onkeydown = checkKey;
+
+	function checkKey(e) {
+
+		if (gameOver) {
+			return
+		}
+
+		e = e || window.event;
+
+		if (e.keyCode == '38') {
+			validate(2)
+		}
+		else if (e.keyCode == '40') {
+			// down arrow
+			validate(3)
+		}
+		else if (e.keyCode == '37') {
+			// left arrow
+			validate(0)
+		}
+		else if (e.keyCode == '39') {
+			// right arrow
+			validate(1)
+		}
+
+	}
+
+
+
+	function validate(inputDirection) {
+		if (state == 0) {
+			if (direction == inputDirection) {
+				scoreAdd()
+			}
+		} else {
+			if (inputDirection == 0 && direction == 1) {
+				scoreAdd()
+			} else if (inputDirection == 1 && direction == 0) {
+				scoreAdd()
+			} else if (inputDirection == 2 && direction == 3) {
+				scoreAdd()
+			} else if (inputDirection == 3 && direction == 2) {
+				scoreAdd()
+			}
+		}
+
+		console.log("Score = " + score)
+	}
+
+	function scoreAdd(){
+		score+=1
+		$("#block-container").fadeOut();
+		setState()
+	}
+
+	window.onload = function () {
+		setState()
+	}
+
+	function setState() {
+		state = getRandom(0, 2)
+		direction = getRandom(0, 4)
+		setUI()
+	}
+
+	function getRandom(max, min) {
+		return Math.floor(Math.random() * (max - min)) + min;
+	}
+
+	function setUI() {
+		setArrow()
+		setColor()
+		$("#block-container").fadeIn();
+	}
+
+	function setArrow() {
+		var dirImg
+		switch (direction) {
+			case 0:
+				dirImg = "left.png"
+				break
+			case 1:
+				dirImg = "right.png"
+				break
+			case 2:
+				dirImg = "up.png"
+				break
+			case 3:
+				dirImg = "down.png"
+				break
+		}
+		document.getElementById("arrow").src = dirImg
+	}
+
+	function setColor() {
+		var color
+		switch (state) {
+			case 0:
+				color = "blue"
+				break
+			case 1:
+				color = "red"
+				break
+		}
+		document.getElementById("block").style.background = color
+	}
+
+	var timeleft = 60;
+	var downloadTimer = setInterval(function () {
+		console.log(timeleft)
+		timeleft -= 1;
+		if (timeleft <= 0) {
+			clearInterval(downloadTimer);
+			gameOver = true
+		}
+	}, 1000);
+
+
+</script>
+
+
+
+<body>
+
+	<div id="block-container">
+		<div id="block" style="width:100px;height: 100px;background: #000000;"></div>
+		<img id="arrow" onclick="setState()" src="left.png" />
+	</div>
+
+</body>
+
+</html>
